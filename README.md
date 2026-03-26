@@ -1,77 +1,53 @@
 # 1D Beam Solver
 
-Documentation-first Python project for a Mechanics of Materials beam analysis tool.
+Python beam analysis project for Mechanics of Materials coursework.
 
 Repository: [MarkZaki/1D-Beam-Solver](https://github.com/MarkZaki/1D-Beam-Solver)
 
 ## Overview
 
-This repository is intended to become a simple beam solver and visualizer built in Python for coursework and self-study in Mechanics of Materials.
+This project solves a first set of statically determinate 1D beam problems and generates the core engineering diagrams needed for classwork:
 
-The target project scope includes:
+- support reactions
+- shear force diagrams
+- bending moment diagrams
+- deflection curves
 
-- beam reaction calculations
-- shear force and bending moment diagrams
-- deflection estimation for basic loading cases
-- stress and strain related post-processing
-- simple visualization of engineering results
+The current version focuses on a small, verifiable solver instead of a large feature set.
 
-## Current Status
+## Implemented Scope
 
-This repository is currently in the setup and planning stage.
+Supported beam types:
 
-What exists now:
+- simply supported beam
+- cantilever beam
 
-- a cleaned project README
-- an action plan in [`plan.md`](./plan.md)
-- initial git metadata for a Python project
+Supported load types:
 
-What is not implemented yet:
-
-- solver code
-- plotting code
-- a command-line or graphical interface
-- tests and example problems
-
-## Planned Capabilities
-
-The first implementation version is expected to support:
-
-- simply supported beams
-- cantilever beams
-- point loads
-- uniformly distributed loads
+- signed point loads
+- distributed loads defined as `w(x)` over any span segment
 - applied moments
-- reaction force calculation
-- shear force and bending moment evaluation
-- deflection plotting for basic textbook cases
 
-Future expansion may include:
+Implemented outputs:
 
-- multiple load cases
-- torsion and axial loading utilities
-- stress calculations across different sections
-- a simple UI built with a Python web or desktop framework
+- left and right reactions for simply supported beams
+- fixed-end shear and moment for cantilevers
+- shear values along the beam
+- bending moment values along the beam
+- deflection values from numerical integration of `M / (E * I)`
+- saved plot images for shear, moment, and deflection
+- browser-based UI for custom beam cases
+- beam model drawing with supports, loads, reactions, and applied moments
+- point inspection at any beam location
 
-## Engineering Basis
-
-The project will follow standard introductory Mechanics of Materials relationships and textbook beam formulas.
-
-Example reference formulas:
-
-- Simply supported beam with a center point load: `y_max = F * L^3 / (48 * E * I)`
-- Cantilever beam with an end point load: `y_max = F * L^3 / (3 * E * I)`
-
-These formulas are included here as project intent, not as implemented functionality yet.
-
-## Planned Project Structure
-
-The repository is expected to grow into a structure close to:
+## Project Structure
 
 ```text
 1D-Beam-Solver/
 |-- README.md
 |-- plan.md
+|-- requirements.txt
+|-- app.py
 |-- main.py
 |-- beam.py
 |-- solver.py
@@ -80,54 +56,77 @@ The repository is expected to grow into a structure close to:
 `-- tests/
 ```
 
-File names may change during implementation if a better module layout becomes clear.
-
-## Requirements
-
-There are no runtime requirements yet because the solver has not been implemented.
-
-Planned Python stack:
-
-- Python 3.11 or newer
-- `numpy` for numerical calculations
-- `matplotlib` for plotting
-- optionally `streamlit` for a simple interface
-
-## Getting Started
-
-To clone the repository:
-
-```bash
-git clone https://github.com/MarkZaki/1D-Beam-Solver.git
-cd 1D-Beam-Solver
-```
-
-Suggested local setup for future development:
+## Installation
 
 ```bash
 python -m venv .venv
 .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
 ```
 
-Current recommended workflow:
+## Usage
 
-1. Read this README.
-2. Review the action list in [`plan.md`](./plan.md).
-3. Create the initial Python modules and tests.
-4. Add example beam cases and validate the results.
+Run a custom CLI case:
 
-## Repository Link
+```bash
+python main.py --support-type simply_supported --length 5 --point-load -10000:2.5
+```
 
-- GitHub: [https://github.com/MarkZaki/1D-Beam-Solver](https://github.com/MarkZaki/1D-Beam-Solver)
+Run a custom case with a variable distributed load:
+
+```bash
+python main.py --support-type simply_supported --length 10 --udl "-250 - 20*x:2:6"
+```
+
+Launch the browser UI:
+
+```bash
+streamlit run app.py
+```
+
+Generate the three diagram images:
+
+```bash
+python main.py --support-type cantilever --length 3 --point-load -5000:3 --plot --output-dir generated_plots
+```
+
+Run the automated checks:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+## Notes on Conventions
+
+- Vertical forces are signed.
+- Use negative values for downward point loads.
+- For distributed loads, enter a signed expression in `x`. Example downward load: `-250 - 20*x`.
+- The parser accepts either `x` or `X` in the distributed-load expression.
+- Applied moments are entered as positive clockwise values.
+- The CLI reports absolute maximum moment and absolute maximum deflection for easy comparison with textbook results.
+- Raw bending moment and deflection arrays keep their engineering sign, so cantilever downward-load cases show negative bending moments and negative deflection values internally.
+
+## Validation
+
+The test suite verifies:
+
+- Streamlit helper functions for custom beam creation
+- reactions for point-load and UDL cases
+- applied moment reactions and bending-moment jumps
+- zero end moments for simply supported beams
+- maximum moment against reference formulas
+- maximum deflection against reference formulas
+- plot file generation
 
 ## Next Steps
 
-- scaffold the first Python modules
-- define the beam and load data structures
-- implement reaction, shear, and moment calculations
-- add plotting utilities
-- create sample problems and tests
+Good next additions after this version:
 
-## Notes
+- richer mixed-load examples and presets
+- stress calculations from `M * c / I`
+- torsion and axial loading utilities
+- packaging and saved project files
 
-This README is intentionally accurate to the current repository state. As code is added, the documentation should be updated to reflect the real implementation rather than the intended design alone.
+## Status
+
+This repository now contains both a CLI workflow and a Streamlit UI on top of the solver core, while still leaving room for broader Mechanics of Materials features in later versions.
