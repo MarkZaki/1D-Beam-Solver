@@ -47,10 +47,10 @@ This file tracks the initial setup work for the `1D-Beam-Solver` repository.
 
 ## 6. Git Workflow
 
-- [ ] Initialize the local repository on `main`.
-- [ ] Add the GitHub remote.
-- [ ] Commit the initial documentation and metadata files.
-- [ ] Push the first commit to `origin/main`.
+- [x] Initialize the local repository on `main`.
+- [x] Add the GitHub remote.
+- [x] Commit the initial documentation and metadata files.
+- [x] Push the first commit to `origin/main`.
 
 ## 7. Immediate Next Work
 
